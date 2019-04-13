@@ -1,0 +1,96 @@
+<html>
+  <head>
+  	<title>올라프유랑단의 시즌2 벚꽃여행</title>
+  	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  	<!--font//-->
+
+  	
+  	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  	<style>
+  		/* css */
+  	</style>
+  </head>
+  <body>
+  	
+  	<div class='container'>
+  		<button id=initbtn>init</button>
+      <input type=text id=nick>
+      <button id=loginbtn>login</button>
+      <button id=readybtn>ready</button>
+      <button id=startbtn style='display: none;'>start</button>
+      <div id=pick-g>
+      </div>
+  	</div>
+
+  	<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src='/socket.io/socket.io.js'></script>
+    <script type="text/javascript">
+      //linked Model
+      function Game(){
+        var users=[];
+        var score=[];
+        var session=[];
+        var curNum=0;
+        var lastNum=0;
+      }
+
+
+
+    	var server=io();
+      var bingo;
+    	//client code for game logic
+
+      server.on('B-init',()=>{
+        $('#pick-g').html('');
+      });
+
+      server.on('all-ready',()=>{
+        $('#startbtn').css('display','block');
+      });
+
+      server.on('B-start',(cnt)=>{
+
+        cnt=parseInt(cnt);
+        for(var i=1;i<=cnt;i++){
+          var box='<button id=box'+i+' onclick="pick('+i+')">'+i+'</button>';
+          $('#pick-g').append(box);
+        }
+      });
+
+      server.on('B-gameover',(d)=>{
+        alert(d.g);
+        //alert(bingo.id + '님이 걸렸습니다.');
+      });
+
+      //event code
+      $('#initbtn').click(()=>{
+        server.emit('init');
+        alert('init is completed.');
+      });
+
+      $('#loginbtn').click(()=>{
+        var nick=$('#nick').val();
+        server.emit('login',nick);
+      });
+
+
+      $('#readybtn').click(()=>{
+        server.emit('ready','ready');
+      });
+
+      $('#startbtn').click(()=>{
+          server.emit('B-start');
+      });
+
+      function pick(num) {
+        alert(num+'');
+        server.emit('pick',num);
+      }
+
+    </script>
+  </body>
+</html>
