@@ -1,0 +1,26 @@
+title Sub game template sequence diagrams.
+
+client1->server : server.getMasterPrivileged()
+server-->client1 : Okay.
+alt if other clients request for getting master priv.
+    client2->server : server.getMasterPrivileged()
+    server-->client2 : Fxxk u Nope.
+end
+
+
+client1->server : server.gameStart()
+
+
+note over client1,client2 : async
+client2->server : do-something()
+server->server : processing()
+client1->server : do-something()
+server->server : processing()
+
+alt server.isGameOver() == TRUE
+    note over client1,client2 :  broadcast result
+    server->client1 : result
+    client1->client1:showResult()
+    server->client2: result
+    client2->client2:showResult()
+end
